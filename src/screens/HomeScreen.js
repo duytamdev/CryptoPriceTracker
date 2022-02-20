@@ -1,14 +1,50 @@
-import React from 'react';
-import {FlatList, StyleSheet, View} from 'react-native';
-import cryptocurrencies from "../../assets/data/cryptocurrencies.json";
+import React, {useEffect, useState} from 'react';
+import {FlatList, StyleSheet, View,Text} from 'react-native';
 import CoinItem from "../components/CoinItem";
-
-const HomeScreen = () => {
+import {getMarketData} from "../services/cryptoService";
+const Header = ()=>{
+    return (
+        <View style={styles.headerContainer}>
+            <Text style={styles.title}>Markers</Text>
+        </View>
+    )
+}
+const HomeScreen = ({navigation}) => {
+    const [data, setData] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+    useEffect(()=>{
+       const fetchMarkerData =async() => {
+           const res = await getMarketData();
+           setData(res)
+       }
+       fetchMarkerData()
+    },[])
+    const handleRefresh = () => {
+      setRefreshing(true);
+        const fetchMarkerData =async() => {
+            const res = await getMarketData();
+            setData(res)
+        }
+        fetchMarkerData()
+      setRefreshing(false);
+    }
+    const handleWatchDetail = (coin) => {
+      navigation.navigate('CoinDetailedScreen',{
+          name: coin.name,
+          rank: coin.market_cap_rank,
+          symbol: coin.symbol,
+          price_change_percentage_24h:coin.price_change_percentage_24h,
+          current_price: coin.current_price,
+          image: coin.image,
+          sparkline:coin.sparkline_in_7d.price
+      });
+    }
     return (
         <View style={styles.container}>
-            <FlatList data={cryptocurrencies} renderItem={({item}) => {
+            <FlatList ListHeaderComponent={Header} refreshing={refreshing} onRefresh={handleRefresh} data={data} renderItem={({item}) => {
                 return (
                     <CoinItem
+                        onPress={()=>handleWatchDetail(item)}
                         market_cap={item.market_cap}
                         price_change_percentage_24h={item.price_change_percentage_24h}
                         current_price={item.current_price}
@@ -25,9 +61,20 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 20,
+        paddingTop: 40,
         flex: 1,
         backgroundColor: '#121212',
+    },
+    headerContainer: {
+        paddingStart: 16,
+        borderBottomColor:'white',
+        borderBottomWidth: 1,
+        paddingBottom: 16,
+    },
+    title:{
+      color:'white',
+      fontWeight:'bold',
+      fontSize: 24,
     },
 });
 export default HomeScreen;

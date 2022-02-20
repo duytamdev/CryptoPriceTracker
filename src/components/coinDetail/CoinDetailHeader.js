@@ -1,13 +1,16 @@
 import React from 'react';
-import {Text, View, StyleSheet, Image} from 'react-native';
+import {Text, View, StyleSheet, Image,TouchableOpacity} from 'react-native';
 import {EvilIcons, MaterialIcons} from "@expo/vector-icons";
 
-const CoinDetailHeader = ({image,symbol,marketCapRank}) => {
+const CoinDetailHeader = ({image,symbol,marketCapRank,onGoBack}) => {
 
     return (
         <View style={styles.headerBar}>
-            <MaterialIcons name="arrow-back-ios" size={30} color="white"/>
+            <TouchableOpacity onPress={onGoBack}>
+                <MaterialIcons name="arrow-back-ios" size={30} color="white"/>
+            </TouchableOpacity>
             <View style={styles.tickerContainer}>
+
                 <Image source={{uri: image}} style={{width: 25, height: 25}}/>
                 <Text style={styles.tickerTitle}>{symbol.toUpperCase()}</Text>
                 <View style={styles.rankContainer}>

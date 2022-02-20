@@ -1,45 +1,36 @@
 import React, {useState} from 'react';
 import {Dimensions, StyleSheet, Text, TextInput, View} from 'react-native';
-import Coin from '../../assets/data/crypto.json';
 import CoinDetailHeader from "../components/coinDetail/CoinDetailHeader";
 import {AntDesign} from "@expo/vector-icons";
 import {ChartDot, ChartPath, ChartPathProvider, ChartYLabel} from "@rainbow-me/animated-charts";
 
 export const {width: SIZE} = Dimensions.get('window');
 
-const CoinDetailedScreen = () => {
+const CoinDetailedScreen = ({navigation,route}) => {
+
     const {
-        image: {small},
-        symbol,
-        name,
-        prices,
-        market_data: {
-            market_cap_rank,
-            current_price,
-            price_change_percentage_24h,
-        },
-    } = Coin;
+        current_price, image, name, symbol, price_change_percentage_24h, sparkline,rank
+    } = route.params;
     const [coinValue, setCoinValue] = useState('1');
-    const [usdValue, setUsdValue] = useState(current_price.usd.toString());
+    const [usdValue, setUsdValue] = useState(current_price.toString());
     const percentageIcon = price_change_percentage_24h < 0 ? 'caretdown' : 'caretup'
     const percentageColor = price_change_percentage_24h < 0 ? '#ea3943' : '#16c784';
-    const chartColor = (current_price.usd > prices[0][1])? '#16c784':'#ea3943'
 
     const changeCoinValue = (value) => {
         setCoinValue(value);
         const floatValue = parseFloat(value) || 0;
-        setUsdValue((floatValue * current_price.usd).toFixed(5).toString());
+        setUsdValue((floatValue * current_price).toFixed(5).toString());
     };
 
     const changeUsdValue = (value) => {
         setUsdValue(value);
         const floatValue = parseFloat(value)|| 0;
-        setCoinValue((floatValue / current_price.usd).toFixed(5).toString());
+        setCoinValue((floatValue / current_price).toFixed(5).toString());
     };
     const formatUSD = value => {
         'worklet';
         if (value === '') {
-            const formattedValue = `$${current_price.usd.toLocaleString('en-US', { currency: 'USD' })}`
+            const formattedValue = `$${current_price.toLocaleString('en-US', { currency: 'USD' })}`
             return formattedValue;
         }
 
@@ -49,12 +40,13 @@ const CoinDetailedScreen = () => {
 
     return (
         <View style={styles.container}>
-            <ChartPathProvider data={{points: prices.map(([x,y])=>({x,y})), smoothingStrategy: 'bezier'}}>
+            <ChartPathProvider data={{points:sparkline, smoothingStrategy: 'bezier'}}>
 
                 <CoinDetailHeader
-                    image={small}
+                    onGoBack={()=> navigation.goBack()}
+                    image={image}
                     symbol={symbol}
-                    marketCapRank={market_cap_rank}
+                    marketCapRank={rank}
                 />
                 <View style={styles.priceContainer}>
                     <View>
@@ -78,8 +70,8 @@ const CoinDetailedScreen = () => {
 
                 </View>
                 <View>
-                    <ChartPath strokeWidth={2} height={SIZE / 2} stroke={chartColor} width={SIZE}/>
-                    <ChartDot style={{backgroundColor: chartColor,}}
+                    <ChartPath strokeWidth={2} height={SIZE / 2} stroke={percentageColor} width={SIZE}/>
+                    <ChartDot style={{backgroundColor: percentageColor,}}
                     />
                 </View>
                 <View style={{flexDirection: 'row'}}>

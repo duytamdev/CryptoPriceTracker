@@ -1,12 +1,15 @@
 import React from 'react';
-import CoinDetailedScreen from "./src/screens/CoinDetailedScreen";
 import {StatusBar, View} from "react-native";
-import HomeScreen from "./src/screens/HomeScreen";
+import {NavigationContainer} from "@react-navigation/native";
+import Navigation from "./src/natigation";
+
 export default function App() {
   return (
-      <View style={{flex:1}}>
-        <HomeScreen/>
-        <StatusBar style={'light'}/>
-      </View>
+      <NavigationContainer>
+          <View style={{flex:1}}>
+              <Navigation/>
+              <StatusBar style={'light'}/>
+          </View>
+      </NavigationContainer>
   )
 }

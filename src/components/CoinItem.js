@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View,TouchableOpacity} from 'react-native';
 import {AntDesign} from '@expo/vector-icons';
 
 const CoinItem =
@@ -10,7 +10,8 @@ const CoinItem =
          price_change_percentage_24h,
          market_cap,
          current_price,
-         symbol
+         symbol,
+        onPress,
      }) => {
         const normalizeMarketCap = (marketCap) => {
             if (marketCap > 1000000000000) {
@@ -30,7 +31,7 @@ const CoinItem =
         const percentageColor = price_change_percentage_24h < 0 ? '#ea3943' : '#16c784';
         const percentageIcon = price_change_percentage_24h < 0 ? 'caretdown' : 'caretup'
         return (
-            <View style={styles.container}>
+            <TouchableOpacity onPress={onPress} style={styles.container}>
                 <Image
                     style={{width: 30, height: 30, marginEnd: 10, alignSelf: 'center'}}
                     source={{uri: logoUrl}}
@@ -56,7 +57,7 @@ const CoinItem =
                     <Text style={styles.text}>{`MCap ${normalizeMarketCap(market_cap)}`}</Text>
 
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     };
 const styles = StyleSheet.create({
