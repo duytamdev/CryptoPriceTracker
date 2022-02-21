@@ -1,21 +1,21 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Dimensions, StyleSheet, Text, TextInput, View} from 'react-native';
 import CoinDetailHeader from "../components/coinDetail/CoinDetailHeader";
 import {AntDesign} from "@expo/vector-icons";
 import {ChartDot, ChartPath, ChartPathProvider, ChartYLabel} from "@rainbow-me/animated-charts";
+import {FavoriteContext} from "../context/FavoriteContext";
 
 export const {width: SIZE} = Dimensions.get('window');
 
 const CoinDetailedScreen = ({navigation,route}) => {
 
     const {
-        current_price, image, name, symbol, price_change_percentage_24h, sparkline,rank
+        current_price, image, name, symbol, price_change_percentage_24h, sparkline,rank,id,
     } = route.params;
     const [coinValue, setCoinValue] = useState('1');
     const [usdValue, setUsdValue] = useState(current_price.toString());
     const percentageIcon = price_change_percentage_24h < 0 ? 'caretdown' : 'caretup'
     const percentageColor = price_change_percentage_24h < 0 ? '#ea3943' : '#16c784';
-
     const changeCoinValue = (value) => {
         setCoinValue(value);
         const floatValue = parseFloat(value) || 0;
@@ -43,6 +43,7 @@ const CoinDetailedScreen = ({navigation,route}) => {
             <ChartPathProvider data={{points:sparkline, smoothingStrategy: 'bezier'}}>
 
                 <CoinDetailHeader
+                    coinId={id}
                     onGoBack={()=> navigation.goBack()}
                     image={image}
                     symbol={symbol}

@@ -1,9 +1,19 @@
-import React from 'react';
-import {Text, View, StyleSheet, Image,TouchableOpacity} from 'react-native';
-import {EvilIcons, MaterialIcons} from "@expo/vector-icons";
+import React, {useContext} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {AntDesign, MaterialIcons} from "@expo/vector-icons";
+import {FavoriteContext} from "../../context/FavoriteContext";
 
-const CoinDetailHeader = ({image,symbol,marketCapRank,onGoBack}) => {
-
+const CoinDetailHeader = ({image, symbol, marketCapRank, onGoBack, coinId}) => {
+    const {favoriteList, addNewFavoriteCoin, removeFavoriteCoin} = useContext(FavoriteContext);
+    const checkIfCoinIsFavoriteList = () => {
+        return favoriteList.some(coinIdValue => coinIdValue === coinId);
+    }
+    const handleLikeCoin = async () => {
+        if (checkIfCoinIsFavoriteList() === true) {
+            return await removeFavoriteCoin(coinId);
+        }
+        return await addNewFavoriteCoin(coinId);
+    }
     return (
         <View style={styles.headerBar}>
             <TouchableOpacity onPress={onGoBack}>
@@ -17,7 +27,11 @@ const CoinDetailHeader = ({image,symbol,marketCapRank,onGoBack}) => {
                     <Text style={styles.tickerRank}>#{marketCapRank}</Text>
                 </View>
             </View>
-            <EvilIcons name="user" size={30} color="white"/>
+            <AntDesign
+                onPress={handleLikeCoin}
+                name={checkIfCoinIsFavoriteList() == true ? 'star' : 'staro'}
+                size={24}
+                color="yellow"/>
         </View>
     );
 };
